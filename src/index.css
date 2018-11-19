@@ -2,3 +2,8 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
+
+.timeCountDown>div>div{
+	display: inline-block;
+	position: absolute;
+}
