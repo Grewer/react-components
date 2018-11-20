@@ -3,7 +3,7 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
-.timeCountDown>div>div{
+.timeCountDown > div > div {
 	display: inline-block;
 	position: absolute;
 }

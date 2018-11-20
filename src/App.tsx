@@ -1,6 +1,6 @@
 import React from 'react';
 import {HashRouter as Router, Link, Route, Switch} from 'react-router-dom'
-import TimeCountdown from "@/components/timeCountdown/timeCountdown";
+import UseTimeCountdown from "@/components/timeCountdown/useTimeCountdown";
 
 const Main = function (props) {
   return <div>
@@ -22,7 +22,7 @@ class App extends React.Component {
         </Router>
         <Router>
           <Switch>
-            <Route path="/timeCountdown" component={TimeCountdown} exact={true}/>
+            <Route path="/timeCountdown" component={UseTimeCountdown} exact={true}/>
           </Switch>
         </Router>
       </div>

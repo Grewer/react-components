@@ -1,64 +1,71 @@
 import * as React from 'react';
 import QueueAnim from 'rc-queue-anim';
 
-// 方案 1
+interface IComponent {
+  time: number
+  start: boolean
+}
 
-class TimeCountdown extends React.PureComponent {
+interface IState {
+  time: number
+}
+
+
+class TimeCountdown extends React.PureComponent<IComponent, IState> {
   state = {
-    time: '10:00:04',
-    hours: '10',
-    minutes: '00',
-    seconds: '04',// 后续更新
+    time: 0
   }
+  private count: NodeJS.Timeout;
+  private hasStart: boolean = false
 
-  changeNum = (num: string): string => {
-    let min = Number(num)
-    let afterChange = String(min - 1)
-    if (afterChange.length === 1) {
-      afterChange = '0' + afterChange
-    }
-    return afterChange
-  }
 
-  count = () => {
-    const time = this.state.time
-    let timeSplit = time.split(':')
-    let afterChange: string
-    let posi: number
-
-    let l = timeSplit.length
-    while (l--) {
-      const cur = timeSplit[l]
-      if (Number(cur) > 0) {
-        afterChange = this.changeNum(cur)
-        posi = l
-        break;
+  timeCount = () => {
+    if (this.props.time > 0) {
+      if (this.hasStart) {
+        this.timeCount = () => {
+          if (this.props.time > 0) {
+            this.setState({time: this.state.time - 1})
+          }
+        }
       } else {
-        timeSplit[l] = '59'
+        this.hasStart = true
+        this.setState({
+          time: this.props.time
+        })
+        console.log('此处触发')
       }
+      this.setState({time: this.state.time - 1})
     }
-
-    // @ts-ignore
-    timeSplit[posi] = afterChange
-
-    this.setState({
-      time: timeSplit.join(':')
-    })
-  }
-
-  setTime = () => {
-    setTimeout(() => {
-      this.count()
-      this.setTime()
-    }, 1000)
   }
 
   componentDidMount() {
-    this.setTime()
+    this.count = setInterval(this.timeCount, 1000)
   }
 
+  getFormattedTime(time: number) {
+    const totalSeconds = time
+    let seconds: string = String(totalSeconds % 60 | 0)
+    let minutes: string = String((totalSeconds / 60 | 0) % 60)
+    let hours: string = String(totalSeconds / 3600 | 0)
+
+    seconds = `${Number(seconds) < 10 ? '0' : ''}${seconds}`
+    minutes = `${Number(minutes) < 10 ? '0' : ''}${minutes}`
+    hours = `${Number(hours) < 10 ? '0' : ''}${hours}`
+
+    return {seconds, minutes, hours}
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.count)
+  }
+
+
   public render() {
-    const time = this.state.time.split(':')
+    const {start} = this.props
+    if (!start) {
+      return <div>00:00:00</div>
+    }
+    const {seconds, minutes, hours} = this.getFormattedTime(this.state.time)
     return (<div className="timeCountDown">
       <h3>时间:</h3>
       <QueueAnim
@@ -69,18 +76,11 @@ class TimeCountdown extends React.PureComponent {
           {opacity: [0, 0], translateY: [0, 20]}
         ]}
       >
-        {
-          (function () {
-            let l = time.length
-            return time.map((v, k) => {
-              let temp = <div style={{left: k * 28}} key={`${k}${v}`}>{v}</div>
-              if (k !== l - 1) {
-                temp = <div style={{left: k * 25}} key={`${k}${v}`}><span>{v}</span>:</div>
-              }
-              return temp
-            })
-          }())
-        }
+        <div key={`h${hours}`}>{hours}</div>
+        <div className="test" style={{left: 30}} key={'hm'}>:</div>
+        <div style={{left: 40}} key={`m${minutes}`}>{minutes}</div>
+        <div style={{left: 70}} key={'mm'}>:</div>
+        <div style={{left: 80}} key={`s${seconds}`}>{seconds}</div>
       </QueueAnim>
     </div>);
   }
