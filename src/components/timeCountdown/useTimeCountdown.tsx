@@ -2,23 +2,19 @@ import * as React from 'react';
 import TimeCountdown from "@/components/timeCountdown/timeCountdown";
 
 class UseTimeCountdown extends React.PureComponent {
-  state = {start: false, time: 36004}
+  state = {time: 36004}
 
   componentDidMount() {
     setTimeout(() => {
       this.setState({
-        start: true
+        time: 36004
       })
     }, 1000)
-    setTimeout(() => {
-      this.forceUpdate()
-    }, 2000)
-
   }
 
   public render() {
     return (<div>
-      <TimeCountdown time={this.state.time} start={this.state.start}/>
+      <TimeCountdown time={this.state.time}/>
     </div>);
   }
 }
