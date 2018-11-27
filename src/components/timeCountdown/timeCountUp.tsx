@@ -9,27 +9,27 @@ interface IComponent {
   start: boolean
 }
 
-interface IState {
-  time: number
-}
 
-class TimeCountUp extends React.PureComponent<IComponent, IState> {
+class TimeCountUp extends React.PureComponent<IComponent, IComponent> {
   state = {
-    time: 0
+    time: 0,
+    start: false
   }
   private count: NodeJS.Timeout;
-  private lastTime?: number;
+
+  static getDerivedStateFromProps(Props, State) {
+    if (Props.start !== State.start) {
+      return {
+        start: Props.start,
+        time: Props.time
+      }
+    }
+    return State
+  }
 
   timeCount = () => {
     console.log('trigger')
     if (this.props.start) {
-      if (this.lastTime !== this.props.time) {
-        this.lastTime = this.props.time
-        this.setState({
-          time: this.props.time
-        })
-        console.log('此处触发')
-      }
       this.setState({time: this.state.time + 1})
     }
   }

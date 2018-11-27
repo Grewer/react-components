@@ -10,27 +10,30 @@ interface IComponent {
 
 interface IState {
   time: number
+  start: boolean
 }
 
 
 class TimeCountdown extends React.PureComponent<IComponent, IState> {
   state = {
-    time: 0
+    time: 0,
+    start: false
   }
   private count: NodeJS.Timeout;
-  private hasStart: boolean = false
 
+  static getDerivedStateFromProps(Props, State) {
+    if (Props.start !== State.start) {
+      return {
+        start: Props.start,
+        time: Props.time
+      }
+    }
+    return State
+  }
 
   timeCount = () => {
     console.log('trigger')
     if (this.props.time > 0) {
-      if (!this.hasStart) {
-        this.hasStart = true
-        this.setState({
-          time: this.props.time
-        })
-        console.log('此处触发')
-      }
       if (this.state.time > 0) {
         this.setState({time: this.state.time - 1})
       }
